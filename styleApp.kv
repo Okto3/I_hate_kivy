@@ -1,0 +1,279 @@
+#:import SlideTransition kivy.uix.screenmanager.SlideTransition
+
+
+MyScreenManager:
+    transition: SlideTransition()
+    FirstScreen:
+    StartScreen:
+    SearchLyricsScreen:
+    displayLyricsScreen:
+    EventRego:
+
+    
+<FirstScreen>:
+    name: 'loginPage'
+    size_hint: None, None
+    size: 300,533
+    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+    elevation: 10
+    padding: 25
+    spacing: 25
+    orientation: 'vertical'
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            size: self.size
+            
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 25
+        spacing: 25
+        Label:
+            id: welcome_label
+            text: "WELCOME"
+            font_size:40
+            halign: 'center'
+            valign: 'top'
+            color: 0.3,0.3,0.3,1
+            size_hint_y: 1
+            height: self.texture_size[1]
+            padding_y:30
+        
+        TextInput:
+            id: username
+            hint_text: "username"
+            font_size: 18
+            pos_hint: {"centre_x":0.5}
+            size_hint: (1, None)
+            height: 35
+            multiline: False
+            
+        
+        TextInput:
+            id: password
+            hint_text: "password"
+            font_size: 18
+            pos_hint: {"centre_x":0.5}
+            size_hint: (1, None)
+            height: 35
+            multiline: False
+            spacing: 10
+
+        Button:
+            id: submitLoginButton
+            text: "Submit"
+            pos_hint: {"centre_x":0.5}
+            size_hint: (1, None)
+            height: 40
+            multiline: False
+            on_release: 
+                app.root.getLogin()
+                
+        
+        Button:
+            id: registerButton
+            text: "Register"
+            pos_hint: {"centre_x":0.5}
+            size_hint: (1, None)
+            height: 40
+            multiline: False
+            on_release: 
+                app.root.getRegistration()
+                
+<StartScreen>:
+    name: 'start'
+    size_hint: None, None
+    size: 300,533
+    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+    elevation: 10
+    padding: 15
+    spacing: 15
+    orientation: 'vertical'
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            size: self.size
+    
+    Label:
+        id: songTitleLable
+        text: "Upcoming Karaoke Events"
+        font_size:40
+        halign: 'center'
+        pos_hint: {"x":0,"y":0.8}
+        color: 0.3,0.3,0.3,1
+        padding_y:30
+        text_size: self.width, None
+        size_hint: 1, None
+            
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 15
+        spacing: 15
+        
+
+        Button:
+            id: submitSongTitle
+            text: "Get Lyrics"
+            pos_hint: {"centre_x":0.5}
+            size_hint: (1, None)
+            height: 40
+            multiline: False
+            on_release: 
+                root.manager.current = 'SearchLyricsPage'
+        Button:
+            id: eventRegistration
+            text: "Register Event"
+            pos_hint: {"centre_x":0.5}
+            size_hint: (1, None)
+            height: 40
+            multiline: False
+            on_release: 
+                root.manager.current = 'EventRego'
+
+<SearchLyricsScreen>:
+    name: 'SearchLyricsPage'
+    size_hint: None, None
+    size: 300,533
+    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+    elevation: 10
+    padding: 25
+    spacing: 25
+    orientation: 'vertical'
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            size: self.size
+            
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 15
+        spacing: 15
+        Label:
+            id: songTitleLable
+            text: "Seach For Song"
+            font_size:40
+            halign: 'center'
+            valign: 'top'
+            color: 0.3,0.3,0.3,1
+            height: self.texture_size[1]
+            padding_y:30
+            text_size: self.width, None
+            size_hint: 1, None
+        
+        TextInput:
+            id: songTitle
+            hint_text: "Title"
+            font_size: 18
+            pos_hint: {"centre_x":0.5}
+            size_hint: (1, None)
+            height: 35
+            multiline: False
+        
+        TextInput:
+            id: artist
+            hint_text: "Artist"
+            font_size: 18
+            pos_hint: {"centre_x":0.5}
+            size_hint: (1, None)
+            height: 35
+            multiline: False
+        BoxLayout:
+            orientation: 'vertical'
+            padding: 15
+            spacing: 15
+
+            Button:
+                id: submitSongTitle
+                text: "Get Lyrics"
+                pos_hint: {"centre_x":0.5}
+                size_hint: (1, None)
+                height: 40
+                multiline: False
+                on_release: app.root.getLyrics()
+            Button:
+                id: backToHome
+                text: "Back"
+                pos_hint: {"centre_x":0.5}
+                size_hint: (1, None)
+                height: 40
+                multiline: False
+                on_release: root.manager.current = 'start'
+
+<displayLyricsScreen>:
+    #btn: remove
+    name: 'displayLyricsPage'
+    size_hint: None, None
+    size: 300,533
+    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+    elevation: 10
+    padding: 25
+    spacing: 25
+    orientation: 'vertical'
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            size: self.size
+    BoxLayout:
+        orientation: 'vertical'
+        
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            minimum_height: self.height
+            Label:
+                
+                id: lyricsLable
+                text: ""
+                font_size:20
+                halign: 'left'
+                pos_hint: {"x":0,"y":0.8}
+                color: 0.3,0.3,0.3,1
+                padding: (10,30)
+                text_size: self.width, None
+                size_hint_y: None
+                height: self.texture_size[1]
+        
+        Button:
+            id: backToHome
+            text: "Back"
+            pos_hint: {"centre_x":0.5}
+            size_hint: (1, None)
+            height: 40
+            multiline: False
+            on_release: app.root.current = 'start'
+
+<EventRego>:
+    name: 'EventRego'
+    size_hint: None, None
+    size: 300,533    
+    orientation: 'vertical'
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            size: self.size
+    BoxLayout:
+        orientation: 'vertical'
+        height: self.minimum_height
+        padding: 25
+        spacing: 25
+        Label:
+            text: "start"
+            font_size:20
+            color: 0.3,0.3,0.3,1
+            padding_y:30
+            text_size: self.width, None
+            size_hint: 1, None
+        Button:
+            id: backToHome
+            text: "Back"
+            pos_hint: {"centre_x":0.5}
+            size_hint: (1, None)
+            height: 40
+            multiline: False
+            on_release: 
+                app.root.current = "start"
