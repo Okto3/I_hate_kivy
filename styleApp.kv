@@ -2,7 +2,7 @@
 
 
 MyScreenManager:
-    transition: SlideTransition()
+    
     FirstScreen:
     StartScreen:
     SearchLyricsScreen:
@@ -14,10 +14,10 @@ MyScreenManager:
     name: 'loginPage'
     size_hint: None, None
     size: 300,533
-    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+    #pos_hint: {"center_x": 0.5, "center_y": 0.5}
     elevation: 10
-    padding: 25
-    spacing: 25
+    #padding: 25
+    #spacing: 25
     orientation: 'vertical'
     canvas.before:
         Color:
@@ -28,7 +28,7 @@ MyScreenManager:
     BoxLayout:
         orientation: 'vertical'
         padding: 25
-        spacing: 25
+        spacing: 15
         Label:
             id: welcome_label
             text: "WELCOME"
@@ -60,32 +60,36 @@ MyScreenManager:
             multiline: False
             spacing: 10
 
-        Button:
-            id: submitLoginButton
-            text: "Submit"
-            pos_hint: {"centre_x":0.5}
-            size_hint: (1, None)
-            height: 40
-            multiline: False
-            on_release: 
-                app.root.getLogin()
-                
-        
-        Button:
-            id: registerButton
-            text: "Register"
-            pos_hint: {"centre_x":0.5}
-            size_hint: (1, None)
-            height: 40
-            multiline: False
-            on_release: 
-                app.root.getRegistration()
+        BoxLayout:
+            orientation: 'vertical'
+            spacing: 15
+            Button:
+                id: submitLoginButton
+                text: "Submit"
+                pos_hint: {"centre_x":0.5}
+                size_hint: (1, None)
+                height: 40
+                multiline: False
+                on_release:
+                    root.manager.transition.direction = 'up' 
+                    app.root.getLogin()
+                    
+            
+            Button:
+                id: registerButton
+                text: "Register"
+                pos_hint: {"centre_x":0.5}
+                size_hint: (1, None)
+                height: 40
+                multiline: False
+                on_release: 
+                    app.root.getRegistration()
                 
 <StartScreen>:
     name: 'start'
     size_hint: None, None
     size: 300,533
-    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+    #pos_hint: {"center_x": 0.5, "center_y": 0.5}
     elevation: 10
     padding: 15
     spacing: 15
@@ -115,12 +119,13 @@ MyScreenManager:
 
         Button:
             id: submitSongTitle
-            text: "Get Lyrics"
+            text: "Find Lyrics"
             pos_hint: {"centre_x":0.5}
             size_hint: (1, None)
             height: 40
             multiline: False
             on_release: 
+                root.manager.transition.direction = 'left' 
                 root.manager.current = 'SearchLyricsPage'
         Button:
             id: eventRegistration
@@ -130,16 +135,17 @@ MyScreenManager:
             height: 40
             multiline: False
             on_release: 
+                root.manager.transition.direction = 'right' 
                 root.manager.current = 'EventRego'
 
 <SearchLyricsScreen>:
     name: 'SearchLyricsPage'
-    size_hint: None, None
-    size: 300,533
-    pos_hint: {"center_x": 0.5, "center_y": 0.5}
-    elevation: 10
-    padding: 25
-    spacing: 25
+    #size_hint: None, None
+    #size: 300,533
+    #pos_hint: {"center_x": 0.5, "center_y": 0.5}
+    #elevation: 10
+    padding: 15
+    spacing: 15
     orientation: 'vertical'
     canvas.before:
         Color:
@@ -182,17 +188,19 @@ MyScreenManager:
             multiline: False
         BoxLayout:
             orientation: 'vertical'
-            padding: 15
+            #padding: 15
             spacing: 15
 
             Button:
                 id: submitSongTitle
-                text: "Get Lyrics"
+                text: "Search"
                 pos_hint: {"centre_x":0.5}
                 size_hint: (1, None)
                 height: 40
                 multiline: False
-                on_release: app.root.getLyrics()
+                on_release: 
+                    root.manager.transition.direction = 'left' 
+                    app.root.getLyrics()
             Button:
                 id: backToHome
                 text: "Back"
@@ -200,14 +208,16 @@ MyScreenManager:
                 size_hint: (1, None)
                 height: 40
                 multiline: False
-                on_release: root.manager.current = 'start'
+                on_release: 
+                    root.manager.transition.direction = 'right' 
+                    root.manager.current = 'start'
 
 <displayLyricsScreen>:
     #btn: remove
     name: 'displayLyricsPage'
     size_hint: None, None
     size: 300,533
-    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+    #pos_hint: {"center_x": 0.5, "center_y": 0.5}
     elevation: 10
     padding: 25
     spacing: 25
@@ -244,7 +254,9 @@ MyScreenManager:
             size_hint: (1, None)
             height: 40
             multiline: False
-            on_release: app.root.current = 'start'
+            on_release:
+                root.manager.transition.direction = 'right'  
+                app.root.current = 'SearchLyricsPage'
 
 <EventRego>:
     name: 'EventRego'
@@ -259,21 +271,41 @@ MyScreenManager:
     BoxLayout:
         orientation: 'vertical'
         height: self.minimum_height
-        padding: 25
-        spacing: 25
+        padding: 15
+        spacing: 15
         Label:
-            text: "start"
-            font_size:20
+            text: "Register a Karaoke Event"
+            id: date_label
+            font_size:30
+            halign: 'center'
             color: 0.3,0.3,0.3,1
             padding_y:30
             text_size: self.width, None
             size_hint: 1, None
         Button:
-            id: backToHome
-            text: "Back"
-            pos_hint: {"centre_x":0.5}
-            size_hint: (1, None)
+            text: "Select Date"
+            id: date_button
             height: 40
             multiline: False
-            on_release: 
-                app.root.current = "start"
+            size_hint: (1, None)
+            on_release: root.show_date_picker()
+        Button:
+            text: "Select Time"
+            id: time_button
+            height: 40
+            multiline: False
+            size_hint: (1, None)
+            on_release: root.show_time_picker()
+        BoxLayout:
+            orientation: 'vertical'
+            spacing: 35
+            Button:
+                id: backToHome
+                text: "Back"
+                #pos_hint: {"centre_x":0.5}
+                size_hint: (1, None)
+                height: 40
+                multiline: False
+                on_release: 
+                    root.manager.transition.direction = 'left' 
+                    app.root.current = "start"

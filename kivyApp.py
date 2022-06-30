@@ -16,21 +16,51 @@ from kivy.properties import StringProperty, ObjectProperty
 from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy_garden.mapview import MapView
+from kivy.core.window import Window
+from kivymd.uix.picker import MDDatePicker
+from kivymd.uix.picker import MDTimePicker
+from datetime import datetime
+
+Window.size = (300, 533)
 
 
 lyrics = ""
 songTitle = ""
 songArtist = ""
+#date = ''
 
 class FirstScreen(Screen):
     pass
 class SearchLyricsScreen(Screen):
     pass
 class StartScreen(Screen):
-    def mapView(self):
-        mapview = MapView(zoom=12, lat=55.6712674, lon=12.5938239)
-class EventRego(Screen):
     pass
+class EventRego(Screen):
+    
+    def on_save(self, instance, value, date_range):
+        print(instance, value, date_range)
+        self.ids.date_button.text = str(value)
+
+    def on_cancel(self, instance, value):
+        pass
+
+    def show_date_picker(self):
+        date_dialog = MDDatePicker()
+        date_dialog.bind(on_save=self.on_save, on_cancel=self.on_cancel)
+        date_dialog.open()
+    
+    def get_time(self, instance,time):
+        self.ids.time_button.text = str(time)
+    def on_cancel(self,instance,time):
+        pass
+    def show_time_picker(self):
+        default_time = datetime.strptime("7:00:00", '%H:%M:%S').time()
+        time_dialog = MDTimePicker()
+        time_dialog.set_time(default_time)
+        time_dialog.bind(on_cancel=self.on_cancel, time=self.get_time)
+        time_dialog.open()
+
+
 class displayLyricsScreen(Screen,BoxLayout):
     getLyrics = StringProperty()
     message = StringProperty()
@@ -101,7 +131,7 @@ root_widget = Builder.load_file("styleApp.kv")
 
 
 
-class ScreenManagerApp(App):
+class ScreenManagerApp(MDApp):
     def build(self):
         return root_widget
 
