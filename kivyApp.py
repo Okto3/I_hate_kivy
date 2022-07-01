@@ -20,14 +20,15 @@ from kivy.core.window import Window
 from kivymd.uix.picker import MDDatePicker
 from kivymd.uix.picker import MDTimePicker
 from datetime import datetime
+import requests
+import urllib.parse
+import geocoder
 
 Window.size = (300, 533)
 
 
-lyrics = ""
-songTitle = ""
-songArtist = ""
-#date = ''
+Time = ''
+Date = ''
 
 class FirstScreen(Screen):
     pass
@@ -36,14 +37,13 @@ class SearchLyricsScreen(Screen):
 class StartScreen(Screen):
     pass
 class EventRego(Screen):
-    
     def on_save(self, instance, value, date_range):
-        print(instance, value, date_range)
+        #print(instance, value, date_range)
         self.ids.date_button.text = str(value)
-
+        global Date
+        Date = str(value)
     def on_cancel(self, instance, value):
         pass
-
     def show_date_picker(self):
         date_dialog = MDDatePicker()
         date_dialog.bind(on_save=self.on_save, on_cancel=self.on_cancel)
@@ -51,6 +51,8 @@ class EventRego(Screen):
     
     def get_time(self, instance,time):
         self.ids.time_button.text = str(time)
+        global Time
+        Time = str(time)
     def on_cancel(self,instance,time):
         pass
     def show_time_picker(self):
@@ -59,16 +61,13 @@ class EventRego(Screen):
         time_dialog.set_time(default_time)
         time_dialog.bind(on_cancel=self.on_cancel, time=self.get_time)
         time_dialog.open()
+    
 
 
 class displayLyricsScreen(Screen,BoxLayout):
     getLyrics = StringProperty()
-    message = StringProperty()
-    btn = ObjectProperty(None)
-
     def on_enter(self):
         Clock.schedule_once(self.dispLyrics)
-
     def dispLyrics(self,dt):    
         self.ids.lyricsLable.text = lyrics
 
@@ -122,17 +121,35 @@ class MyScreenManager(ScreenManager):
         #print(lyrics)
         self.current = 'displayLyricsPage'
         return lyrics
-         
+    
+    def getEventRegistration(self):
+        EventRego_instance = self.get_screen('EventRego')
+        address = EventRego_instance.ids["address"].text
+        city = EventRego_instance.ids["city"].text
+        postcode = EventRego_instance.ids["postcode"].text
+        description = EventRego_instance.ids["description"].text
+        url = 'https://nominatim.openstreetmap.org/search/' + urllib.parse.quote(address) +'?format=json'
+        response = requests.get(url).json()
+        latitude = response[0]["lat"]
+        longitude = response[0]["lon"]
+
+        print(address,city,postcode,description,Time,Date,latitude,longitude)
+
+        eventRegisterDetails = {"address":address,"city":city,"postcode":postcode,"description":description,"time":Time,"date":Date,"latitude":latitude,"longitude":longitude} #creates a dict of login details
+        url = "https://zacapelt.pythonanywhere.com/eventRegister" #url the request is going to 
+        response = urlrequest.sendurlrequest(url, eventRegisterDetails) #sends a POST request to the Flask Webserver
+        dictOfResults = json.loads(response) #converts the data to a python dictionary
+        print(dictOfResults)
     
 
     
-
 root_widget = Builder.load_file("styleApp.kv")
 
 
 
 class ScreenManagerApp(MDApp):
     def build(self):
+        print(geocoder.ip('me').latlng)
         return root_widget
 
 ScreenManagerApp().run()

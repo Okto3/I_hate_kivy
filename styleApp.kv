@@ -140,10 +140,6 @@ MyScreenManager:
 
 <SearchLyricsScreen>:
     name: 'SearchLyricsPage'
-    #size_hint: None, None
-    #size: 300,533
-    #pos_hint: {"center_x": 0.5, "center_y": 0.5}
-    #elevation: 10
     padding: 15
     spacing: 15
     orientation: 'vertical'
@@ -296,9 +292,58 @@ MyScreenManager:
             multiline: False
             size_hint: (1, None)
             on_release: root.show_time_picker()
+        TextInput:
+            id: address
+            hint_text: "Address"
+            font_size: 18
+            pos_hint: {"centre_x":0.5}
+            size_hint: (1, None)
+            height: 35
+            multiline: False
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 15
+            TextInput:
+                id: city
+                hint_text: "City"
+                font_size: 18
+                pos_hint: {"centre_x":0.5}
+                size_hint: (1, None)
+                height: 35
+                multiline: False
+            TextInput:
+                id: postcode
+                hint_text: "Postcode"
+                font_size: 18
+                pos_hint: {"centre_x":0.5}
+                size_hint: (1, None)
+                height: 35
+                multiline: False
+        TextInput:
+            id: description
+            hint_text: "Brief Description"
+            font_size: 18
+            pos_hint: {"centre_x":0.5}
+            size_hint: (1, None)
+            height: 50
+        Label:
+            text: ' '
+            height: 50
+            
         BoxLayout:
             orientation: 'vertical'
-            spacing: 35
+            spacing: 15
+            Button:
+                id: saveRego
+                text: "Save"
+                #pos_hint: {"centre_x":0.5}
+                size_hint: (1, None)
+                height: 40
+                multiline: False
+                on_release: 
+                    root.manager.transition.direction = 'left'
+                    app.root.getEventRegistration() 
+                    app.root.current = "start"
             Button:
                 id: backToHome
                 text: "Back"
