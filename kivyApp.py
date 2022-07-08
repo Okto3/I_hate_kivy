@@ -23,9 +23,18 @@ from datetime import datetime
 import requests
 import urllib.parse
 import geocoder
+import sounddevice as sd
+from scipy.io.wavfile import write
+from kivy.uix.slider import Slider
+from playsound import playsound
+import simpleaudio as sa
+from kivy.core.audio import SoundLoader
+import base64
 
 Window.size = (300, 533)
 
+fs = 4410  # Sample rate
+duration = 10  # Duration of recording
 
 Time = ''
 Date = ''
@@ -61,8 +70,6 @@ class EventRego(Screen):
         time_dialog.set_time(default_time)
         time_dialog.bind(on_cancel=self.on_cancel, time=self.get_time)
         time_dialog.open()
-    
-
 
 class displayLyricsScreen(Screen,BoxLayout):
     getLyrics = StringProperty()
@@ -71,6 +78,8 @@ class displayLyricsScreen(Screen,BoxLayout):
     def dispLyrics(self,dt):    
         self.ids.lyricsLable.text = lyrics
 
+class RecordAudio(Screen):
+    pass
 
 
 class MyScreenManager(ScreenManager):
@@ -141,6 +150,35 @@ class MyScreenManager(ScreenManager):
         dictOfResults = json.loads(response) #converts the data to a python dictionary
         print(dictOfResults)
     
+    def sliderValue(self, value):
+        #print(value)
+        global duration
+        duration = value
+
+    def recordAudio(self):
+        myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=2)
+        sd.wait()  # Wait until recording is finished
+        write('output.wav', fs, myrecording)  # Save as WAV file
+    
+    def playAudio(self):
+        #playsound('output.wav')
+        sound = SoundLoader.load('output.wav')
+        if sound:
+            print("Sound found at %s" % sound.source)
+            print("Sound is %.3f seconds" % sound.length)
+            sound.play()
+    
+    def uploadAudio(self):
+        audio_instance = self.get_screen('recordAudio')
+        with open("output.wav", "rb") as audio_file:
+            encoded_string = base64.b64encode(audio_file.read())
+        description = audio_instance.ids["descriptionOfAudio"].text
+        audioInformation = {"description":description,"audio":encoded_string}
+        url = "https://zacapelt.pythonanywhere.com/audio" #url the request is going to 
+        response = urlrequest.sendurlrequest(url, audioInformation) #sends a POST request to the Flask Webserver
+        dictOfResults = json.loads(response) #converts the data to a python dictionary
+        print(dictOfResults)
+    
 
     
 root_widget = Builder.load_file("styleApp.kv")
@@ -149,7 +187,7 @@ root_widget = Builder.load_file("styleApp.kv")
 
 class ScreenManagerApp(MDApp):
     def build(self):
-        print(geocoder.ip('me').latlng)
+        #print(geocoder.ip('me').latlng)
         return root_widget
 
 ScreenManagerApp().run()

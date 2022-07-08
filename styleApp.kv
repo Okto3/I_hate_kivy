@@ -8,6 +8,7 @@ MyScreenManager:
     SearchLyricsScreen:
     displayLyricsScreen:
     EventRego:
+    RecordAudio:
 
     
 <FirstScreen>:
@@ -137,6 +138,16 @@ MyScreenManager:
             on_release: 
                 root.manager.transition.direction = 'right' 
                 root.manager.current = 'EventRego'
+        Button:
+            id: recordAudio
+            text: "Record Audio"
+            pos_hint: {"centre_x":0.5}
+            size_hint: (1, None)
+            height: 40
+            multiline: False
+            on_release: 
+                root.manager.transition.direction = 'up' 
+                root.manager.current = 'recordAudio'
 
 <SearchLyricsScreen>:
     name: 'SearchLyricsPage'
@@ -354,3 +365,92 @@ MyScreenManager:
                 on_release: 
                     root.manager.transition.direction = 'left' 
                     app.root.current = "start"
+
+<RecordAudio>:
+    name: 'recordAudio'
+    size_hint: None, None
+    size: 300,533
+    elevation: 10
+    padding: 25
+    spacing: 25
+    orientation: 'vertical'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 15
+        spacing: 15
+        Label:
+            text: "Recording Audio"
+            font_size:40
+            halign: 'center'
+            pos_hint: {"x":0,"y":0.8}
+            color: 0.3,0.3,0.3,1
+            padding_y:10
+            text_size: self.width, None
+            size_hint: 1, None
+        BoxLayout:
+            orientation: 'vertical'
+            spacing: 10
+            Label:
+                text: "Duration:"
+                font_size:20
+                halign: 'left'
+                pos_hint: {"x":0,"y":0.8}
+                color: 0.3,0.3,0.3,1
+                padding_y: 15
+                text_size: self.width, None
+                size_hint: 1, None
+            Slider:
+                id: slider
+                min: 0
+                max: 10
+                step: 1
+                value_track: True
+                value_track_color: 0.3,0.3,0.3,1
+                value: 5
+                orientation: 'horizontal'
+                on_value: app.root.sliderValue(self.value)
+            Button:
+                id: startRecording
+                text: "Start Recording"
+                pos_hint: {"centre_x":0.5}
+                size_hint: (1, None)
+                height: 40
+                multiline: False
+                on_release:
+                    app.root.recordAudio()
+            Button:
+                id: playBack
+                text: "Play Back Audio"
+                pos_hint: {"centre_x":0.5}
+                size_hint: (1, None)
+                height: 40
+                multiline: False
+                on_release:
+                    app.root.playAudio()
+            TextInput:
+                id: descriptionOfAudio
+                hint_text: "Description"
+                font_size: 15
+                pos_hint: {"centre_x":0.5}
+                size_hint: (1, None)
+                height: 30
+                multiline: False
+            Button:
+                id: saveAudio
+                text: "Save"
+                pos_hint: {"centre_x":0.5}
+                size_hint: (1, None)
+                height: 40
+                multiline: False
+                on_release:
+                    app.root.uploadAudio()
+        Button:
+            id: backToHome
+            text: "Back"
+            pos_hint: {"centre_x":0.5}
+            size_hint: (1, None)
+            height: 40
+            multiline: False
+            on_release:
+                root.manager.transition.direction = 'down'  
+                app.root.current = 'start'
