@@ -30,6 +30,8 @@ from playsound import playsound
 import simpleaudio as sa
 from kivy.core.audio import SoundLoader
 import base64
+from kivy.uix.dropdown import DropDown
+from kivy.uix.button import Button
 
 Window.size = (300, 533)
 
@@ -42,7 +44,16 @@ Date = ''
 class FirstScreen(Screen):
     pass
 class SearchLyricsScreen(Screen):
-    pass
+    getRecent = StringProperty()
+    #use self.funcName to call a function from the main class
+    #this will get the top 5 unique songs
+    #display the names in a drop down here
+    #if its clicked, use that as the search
+    def on_enter(self):
+        Clock.schedule_once(self.dispRecents)
+    def dispRecents(self,dt):    
+        self.ids.recentSongs.text = 'here is where it should go'
+
 class StartScreen(Screen):
     pass
 class EventRego(Screen):
@@ -178,6 +189,9 @@ class MyScreenManager(ScreenManager):
         response = urlrequest.sendurlrequest(url, audioInformation) #sends a POST request to the Flask Webserver
         dictOfResults = json.loads(response) #converts the data to a python dictionary
         print(dictOfResults)
+    
+    def getRecent():
+        pass
     
 
     

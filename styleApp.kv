@@ -193,6 +193,19 @@ MyScreenManager:
             size_hint: (1, None)
             height: 35
             multiline: False
+        
+        Label:
+            id: recentSongs
+            text: "Suggestions:"
+            font_size:20
+            halign: 'left'
+            valign: 'top'
+            color: 0.3,0.3,0.3,1
+            height: self.texture_size[1]
+            padding_y:30
+            text_size: self.width, None
+            size_hint: 1, None
+
         BoxLayout:
             orientation: 'vertical'
             #padding: 15
@@ -220,11 +233,9 @@ MyScreenManager:
                     root.manager.current = 'start'
 
 <displayLyricsScreen>:
-    #btn: remove
     name: 'displayLyricsPage'
     size_hint: None, None
     size: 300,533
-    #pos_hint: {"center_x": 0.5, "center_y": 0.5}
     elevation: 10
     padding: 25
     spacing: 25
