@@ -32,12 +32,13 @@ from kivy.core.audio import SoundLoader
 import base64
 from kivy.uix.dropdown import DropDown
 from kivy.uix.button import Button
+from kivy.clock import mainthread
 
 Window.size = (300, 533)
 
 fs = 4410  # Sample rate
 duration = 10  # Duration of recording
-
+firstEnter = True
 Time = ''
 Date = ''
 
@@ -45,14 +46,41 @@ class FirstScreen(Screen):
     pass
 class SearchLyricsScreen(Screen):
     getRecent = StringProperty()
-    #use self.funcName to call a function from the main class
-    #this will get the top 5 unique songs
-    #display the names in a drop down here
-    #if its clicked, use that as the search
+    
     def on_enter(self):
         Clock.schedule_once(self.dispRecents)
-    def dispRecents(self,dt):    
-        self.ids.recentSongs.text = 'here is where it should go'
+    def dispRecents(self,dt):
+        print('in search lyrics screen')    
+        url = "https://zacapelt.pythonanywhere.com/recentSongs" #url the request is going to 
+        response = urlrequest.sendurlrequest(url,{})
+        dictOfResults = json.loads(response)
+        print(dictOfResults)
+        '''global firstEnter
+        if firstEnter == True:
+            for i in range(3):
+                firstEnter = False
+                button = Button(text = dictOfResults[i]['title'], on_press=self.press_auth)
+                button.my_id = i
+                self.ids.grid.add_widget(button)'''
+        self.ids.grid.clear_widgets()
+        for i in range(3):
+            button = Button(text = dictOfResults[i]['title'], on_press=self.press_auth)
+            button.my_id = i
+            self.ids.grid.add_widget(button)
+        #for i in range(3):
+        #    self.ids.grid.remove_widget(self.ids.i)
+    def press_auth(self, instance):
+        url = "https://zacapelt.pythonanywhere.com/recentSongs" #url the request is going to 
+        response = urlrequest.sendurlrequest(url,{})
+        dictOfResults = json.loads(response)
+        songDetails = {"song":dictOfResults[instance.my_id]['title'],"artist":dictOfResults[instance.my_id]['artist']}
+        url = "https://zacapelt.pythonanywhere.com/getlyricsplus"
+        response = urlrequest.sendurlrequest(url, songDetails) #sends a POST request to the Flask Webserver
+        dictOfResults = json.loads(response) #converts the data to a python dictionary
+        global lyrics
+        lyrics = dictOfResults['lyrics']
+        self.manager.current = 'displayLyricsPage'
+
 
 class StartScreen(Screen):
     pass
@@ -191,7 +219,8 @@ class MyScreenManager(ScreenManager):
         print(dictOfResults)
     
     def getRecent():
-        pass
+        print('in get recent')
+        
     
 
     

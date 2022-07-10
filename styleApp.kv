@@ -172,7 +172,7 @@ MyScreenManager:
             valign: 'top'
             color: 0.3,0.3,0.3,1
             height: self.texture_size[1]
-            padding_y:30
+            padding_y:10
             text_size: self.width, None
             size_hint: 1, None
         
@@ -196,15 +196,19 @@ MyScreenManager:
         
         Label:
             id: recentSongs
-            text: "Suggestions:"
+            text: "Recents:"
             font_size:20
             halign: 'left'
             valign: 'top'
             color: 0.3,0.3,0.3,1
             height: self.texture_size[1]
-            padding_y:30
+            padding_y:0
             text_size: self.width, None
             size_hint: 1, None
+        GridLayout:
+            valign: 'top'
+            id: grid
+            cols: 1
 
         BoxLayout:
             orientation: 'vertical'
