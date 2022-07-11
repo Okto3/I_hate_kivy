@@ -33,6 +33,8 @@ import base64
 from kivy.uix.dropdown import DropDown
 from kivy.uix.button import Button
 from kivy.clock import mainthread
+from kivy.uix.popup import Popup
+from kivy.garden.mapview import MapMarkerPopup
 
 Window.size = (300, 533)
 
@@ -44,31 +46,21 @@ Date = ''
 
 class FirstScreen(Screen):
     pass
+
 class SearchLyricsScreen(Screen):
-    getRecent = StringProperty()
-    
     def on_enter(self):
         Clock.schedule_once(self.dispRecents)
-    def dispRecents(self,dt):
-        print('in search lyrics screen')    
+    def dispRecents(self,dt): 
         url = "https://zacapelt.pythonanywhere.com/recentSongs" #url the request is going to 
         response = urlrequest.sendurlrequest(url,{})
         dictOfResults = json.loads(response)
         print(dictOfResults)
-        '''global firstEnter
-        if firstEnter == True:
-            for i in range(3):
-                firstEnter = False
-                button = Button(text = dictOfResults[i]['title'], on_press=self.press_auth)
-                button.my_id = i
-                self.ids.grid.add_widget(button)'''
         self.ids.grid.clear_widgets()
         for i in range(3):
-            button = Button(text = dictOfResults[i]['title'], on_press=self.press_auth)
+            button = Button(text = dictOfResults[i]['title'], background_color = (0,1,1,.7), on_press=self.press_auth)
             button.my_id = i
             self.ids.grid.add_widget(button)
-        #for i in range(3):
-        #    self.ids.grid.remove_widget(self.ids.i)
+
     def press_auth(self, instance):
         url = "https://zacapelt.pythonanywhere.com/recentSongs" #url the request is going to 
         response = urlrequest.sendurlrequest(url,{})
@@ -81,9 +73,27 @@ class SearchLyricsScreen(Screen):
         lyrics = dictOfResults['lyrics']
         self.manager.current = 'displayLyricsPage'
 
-
 class StartScreen(Screen):
-    pass
+    def on_enter(self):
+        Clock.schedule_once(self.dispEvents)
+    def dispEvents(self,dt): 
+        url = "https://zacapelt.pythonanywhere.com/upcomingEvents" #url the request is going to 
+        response = urlrequest.sendurlrequest(url,{})
+        dictOfResults = json.loads(response)
+        #print(dictOfResults)
+        self.ids.buttonGrid.clear_widgets()
+        if len(dictOfResults) > 5:
+            numResults = 5
+        else:
+            numResults = len(dictOfResults)
+        for i in range(numResults):
+            buttonText = str(dictOfResults[i]['date']) + "   " + str(dictOfResults[i]['time']) + '\n' + str(dictOfResults[i]['address'])
+            button = Button(text = buttonText, background_color = (0,1,1,.7),on_press=self.press_auth)
+            button.my_id = i
+            self.ids.buttonGrid.add_widget(button)
+    def press_auth(self, instance):
+        self.manager.current = 'Mappopup'
+
 class EventRego(Screen):
     def on_save(self, instance, value, date_range):
         #print(instance, value, date_range)
@@ -120,6 +130,24 @@ class displayLyricsScreen(Screen,BoxLayout):
 class RecordAudio(Screen):
     pass
 
+class Mappopup(Screen):
+    def on_enter(self):
+        Clock.schedule_once(self.dispMap)
+    def dispMap(self,dt): 
+        url = "https://zacapelt.pythonanywhere.com/upcomingEvents" #url the request is going to 
+        response = urlrequest.sendurlrequest(url,{})
+        dictOfResults = json.loads(response)
+        self.ids.a.lat = dictOfResults[0]['latitude']
+        self.ids.a.lon = dictOfResults[0]['longitude']
+        self.ids.b.lat = dictOfResults[1]['latitude']
+        self.ids.b.lon = dictOfResults[1]['longitude']
+        self.ids.c.lat = dictOfResults[2]['latitude']
+        self.ids.c.lon = dictOfResults[2]['longitude']
+        self.ids.d.lat = dictOfResults[3]['latitude']
+        self.ids.d.lon = dictOfResults[3]['longitude']
+        self.ids.e.lat = dictOfResults[4]['latitude']
+        self.ids.e.lon = dictOfResults[4]['longitude']
+        
 
 class MyScreenManager(ScreenManager):
     def build(self):
@@ -218,19 +246,32 @@ class MyScreenManager(ScreenManager):
         dictOfResults = json.loads(response) #converts the data to a python dictionary
         print(dictOfResults)
     
-    def getRecent():
-        print('in get recent')
+    def registerInterest(self, buttonID):
+        print('interested in ' + str(buttonID))
+        url = "https://zacapelt.pythonanywhere.com/upcomingEvents" #url the request is going to 
+        response = urlrequest.sendurlrequest(url,{})
+        dictOfResults = json.loads(response)
+        eventID = dictOfResults[buttonID]['eventID']
+
+        attendanceInformation = {'eventID':eventID}
+        url = "https://zacapelt.pythonanywhere.com/registerInterest" #url the request is going to 
+        response = urlrequest.sendurlrequest(url, attendanceInformation) #sends a POST request to the Flask Webserver
+        dictOfResults = json.loads(response) #converts the data to a python dictionary
+        print(dictOfResults)
+
+
+    
         
     
 
     
-root_widget = Builder.load_file("styleApp.kv")
+
 
 
 
 class ScreenManagerApp(MDApp):
     def build(self):
-        #print(geocoder.ip('me').latlng)
+        root_widget = Builder.load_file("styleApp.kv")
         return root_widget
 
 ScreenManagerApp().run()
