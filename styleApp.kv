@@ -10,6 +10,7 @@ MyScreenManager:
     EventRego:
     RecordAudio:
     Mappopup:
+    ViewEvents:
 
     
 <FirstScreen>:
@@ -33,12 +34,13 @@ MyScreenManager:
         spacing: 15
         Label:
             id: welcome_label
-            text: "WELCOME"
+            text: "Welcome To Low-Key Karaoke"
             font_size:40
             halign: 'center'
             valign: 'top'
             color: 0.3,0.3,0.3,1
             size_hint_y: 1
+            text_size: self.width, None
             height: self.texture_size[1]
             padding_y:30
         
@@ -300,8 +302,8 @@ MyScreenManager:
     BoxLayout:
         orientation: 'vertical'
         height: self.minimum_height
-        padding: 15
-        spacing: 15
+        padding: 10
+        spacing: 10
         Label:
             text: "Register a Karaoke Event"
             id: date_label
@@ -367,7 +369,17 @@ MyScreenManager:
             
         BoxLayout:
             orientation: 'vertical'
-            spacing: 15
+            spacing: 10
+            Button:
+                id: viewYourEvents
+                text: "View Your Events"
+                #pos_hint: {"centre_x":0.5}
+                size_hint: (1, None)
+                height: 40
+                multiline: False
+                on_release: 
+                    root.manager.transition.direction = 'right'
+                    app.root.current = "ViewYourEvents"
             Button:
                 id: saveRego
                 text: "Save"
@@ -568,3 +580,34 @@ MyScreenManager:
         on_release:
             app.root.current = 'start'
 
+<ViewEvents>:
+    name: 'ViewYourEvents'
+    size_hint: None, None
+    size: 300,533
+    elevation: 10
+    padding: 25
+    spacing: 25
+    orientation: 'vertical'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 15
+        spacing: 15
+        Label:
+            text: "View Your Events"
+            font_size:40
+            halign: 'center'
+            pos_hint: {"x":0,"y":0.8}
+            color: 0.3,0.3,0.3,1
+            padding_y:10
+            text_size: self.width, None
+            size_hint: 1, None
+        Button:
+            id: backToHome
+            text: "Back"
+            pos_hint: {"centre_x":0.5}
+            size_hint: (1, None)
+            height: 40
+            multiline: False
+            on_release:
+                root.manager.transition.direction = 'left'  
+                app.root.current = 'EventRego'
